@@ -10,7 +10,7 @@ pub fn build(b: *std.Build) !void {
     const jsons = b.step("parse", "parse raylib headers and generate raylib jsons");
     const raylib_parser_build = b.addExecutable(.{
         .name = "raylib_parser",
-        .root_source_file = std.build.FileSource.relative("raylib_parser.zig"),
+        .root_source_file = std.Build.LazyPath.relative("raylib_parser.zig"),
         .target = target,
         .optimize = .ReleaseFast,
     });
@@ -51,7 +51,7 @@ pub fn build(b: *std.Build) !void {
     const intermediate = b.step("intermediate", "generate intermediate representation of the results from 'zig build parse' (keep custom=true)");
     var intermediateZigStep = b.addRunArtifact(b.addExecutable(.{
         .name = "intermediate",
-        .root_source_file = std.build.FileSource.relative("intermediate.zig"),
+        .root_source_file = std.Build.LazyPath.relative("intermediate.zig"),
         .target = target,
     }));
     intermediate.dependOn(&intermediateZigStep.step);
@@ -60,7 +60,7 @@ pub fn build(b: *std.Build) !void {
     const bindings = b.step("bindings", "generate bindings in from bindings.json");
     var generateZigStep = b.addRunArtifact(b.addExecutable(.{
         .name = "generate",
-        .root_source_file = std.build.FileSource.relative("generate.zig"),
+        .root_source_file = std.Build.LazyPath.relative("generate.zig"),
         .target = target,
     }));
     const fmt = b.addFmt(.{ .paths = &.{generate.outputFile} });
@@ -87,27 +87,37 @@ const dir_raylib = cwd ++ sep ++ "raylib" ++ sep ++ "src";
 const raylib_build = @import("raylib/src/build.zig");
 
 fn linkThisLibrary(b: *std.Build, target: std.Target.Query, optimize: std.builtin.Mode) *std.Build.Step.Compile {
-    const lib = b.addStaticLibrary(.{ .name = "raylib.zig", .target = b.resolveTargetQuery(target), .optimize = optimize });
+    const lib = b.addStaticLibrary(
+        .{
+            .name = "raylib.zig",
+            .target = b.resolveTargetQuery(target),
+            .optimize = optimize,
+            .root_source_file = .{ .path = cwd ++ sep ++ "raylib.zig" },
+        },
+    );
+    lib.linkLibC();
     lib.addIncludePath(.{ .path = dir_raylib });
     lib.addIncludePath(.{ .path = cwd });
-    lib.linkLibC();
     lib.addCSourceFile(.{ .file = .{ .path = cwd ++ sep ++ "marshal.c" }, .flags = &.{} });
-    std.log.info("include '{s}' to {s}", .{ dir_raylib, lib.name });
-    std.log.info("include '{s}' to {s}", .{ cwd, lib.name });
+    std.log.debug("include '{s}' to {s}", .{ dir_raylib, lib.name });
+    std.log.debug("include '{s}' to {s}", .{ cwd, lib.name });
     return lib;
 }
 
 /// add this package to exe
 pub fn addTo(b: *std.Build, exe: *std.Build.Step.Compile, target: std.Target.Query, optimize: std.builtin.Mode, raylibOptions: raylib_build.Options) void {
-    exe.root_module.addAnonymousImport("raylib", .{ .root_source_file = .{ .path = cwd ++ sep ++ "raylib.zig" } });
-    std.log.info("include '{s}' to {s}", .{ dir_raylib, exe.name });
-    std.log.info("include '{s}' to {s}", .{ cwd, exe.name });
-    exe.addIncludePath(.{ .path = dir_raylib });
-    exe.addIncludePath(.{ .path = cwd });
+    const lib_raylib = raylib_build.addRaylib(
+        b,
+        b.resolveTargetQuery(target),
+        optimize,
+        raylibOptions,
+    ) catch |err| std.debug.panic("addRaylib: {any}", .{err});
+
     const lib = linkThisLibrary(b, target, optimize);
-    const lib_raylib = raylib_build.addRaylib(b, b.resolveTargetQuery(target), optimize, raylibOptions) catch |err| std.debug.panic("addRaylib: {any}", .{err});
+
+    exe.root_module.addImport("raylib", &lib.root_module);
+
     exe.linkLibrary(lib_raylib);
-    exe.linkLibrary(lib);
     std.log.info("linked raylib.zig", .{});
 }
 

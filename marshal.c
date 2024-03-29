@@ -3288,9 +3288,9 @@ unsigned char * mrlReadScreenPixels(int width, int height)
 	return rlReadScreenPixels(width, height);
 }
 
-unsigned int mrlLoadFramebuffer(int width, int height)
+unsigned int mrlLoadFramebuffer(void)
 {
-	return rlLoadFramebuffer(width, height);
+	return rlLoadFramebuffer();
 }
 
 void mrlFramebufferAttach(unsigned int fboId, unsigned int texId, int attachType, int texType, int mipLevel)
