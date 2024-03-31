@@ -9,19 +9,19 @@
     {
       "name": "RAYLIB_VERSION_MAJOR",
       "type": "INT",
-      "value": "5",
+      "value": 5,
       "description": ""
     },
     {
       "name": "RAYLIB_VERSION_MINOR",
       "type": "INT",
-      "value": "1",
+      "value": 1,
       "description": ""
     },
     {
       "name": "RAYLIB_VERSION_PATCH",
       "type": "INT",
-      "value": "0",
+      "value": 0,
       "description": ""
     },
     {
@@ -45,7 +45,7 @@
     {
       "name": "PI",
       "type": "FLOAT",
-      "value": "3.14159265358979323846",
+      "value": 3.14159265358979323846,
       "description": ""
     },
     {
@@ -335,6 +335,12 @@
       "type": "UNKNOWN",
       "value": "SHADER_LOC_MAP_METALNESS",
       "description": ""
+    },
+    {
+      "name": "GetMouseRay",
+      "type": "UNKNOWN",
+      "value": "GetScreenToWorldRay",
+      "description": "Compatibility hack for previous raylib versions"
     }
   ],
   "structs": [
@@ -2069,7 +2075,7 @@
         },
         {
           "name": "KEY_MENU",
-          "value": 82,
+          "value": 5,
           "description": "Key: Android menu button"
         },
         {
@@ -2223,7 +2229,7 @@
         {
           "name": "GAMEPAD_BUTTON_RIGHT_FACE_RIGHT",
           "value": 6,
-          "description": "Gamepad right button right (i.e. PS3: Square, Xbox: X)"
+          "description": "Gamepad right button right (i.e. PS3: Circle, Xbox: B)"
         },
         {
           "name": "GAMEPAD_BUTTON_RIGHT_FACE_DOWN",
@@ -2233,7 +2239,7 @@
         {
           "name": "GAMEPAD_BUTTON_RIGHT_FACE_LEFT",
           "value": 8,
-          "description": "Gamepad right button left (i.e. PS3: Circle, Xbox: B)"
+          "description": "Gamepad right button left (i.e. PS3: Square, Xbox: X)"
         },
         {
           "name": "GAMEPAD_BUTTON_LEFT_TRIGGER_1",
@@ -3872,13 +3878,13 @@
       ]
     },
     {
-      "name": "GetMouseRay",
-      "description": "Get a ray trace from mouse position",
+      "name": "GetScreenToWorldRay",
+      "description": "Get a ray trace from screen position (i.e mouse)",
       "returnType": "Ray",
       "params": [
         {
           "type": "Vector2",
-          "name": "mousePosition"
+          "name": "position"
         },
         {
           "type": "Camera",
@@ -3887,24 +3893,25 @@
       ]
     },
     {
-      "name": "GetCameraMatrix",
-      "description": "Get camera transform matrix (view matrix)",
-      "returnType": "Matrix",
+      "name": "GetScreenToWorldRayEx",
+      "description": "Get a ray trace from screen position (i.e mouse) in a viewport",
+      "returnType": "Ray",
       "params": [
+        {
+          "type": "Vector2",
+          "name": "position"
+        },
         {
           "type": "Camera",
           "name": "camera"
-        }
-      ]
-    },
-    {
-      "name": "GetCameraMatrix2D",
-      "description": "Get camera 2d transform matrix",
-      "returnType": "Matrix",
-      "params": [
+        },
         {
-          "type": "Camera2D",
-          "name": "camera"
+          "type": "float",
+          "name": "width"
+        },
+        {
+          "type": "float",
+          "name": "height"
         }
       ]
     },
@@ -3919,21 +3926,6 @@
         },
         {
           "type": "Camera",
-          "name": "camera"
-        }
-      ]
-    },
-    {
-      "name": "GetScreenToWorld2D",
-      "description": "Get the world space position for a 2d camera screen space position",
-      "returnType": "Vector2",
-      "params": [
-        {
-          "type": "Vector2",
-          "name": "position"
-        },
-        {
-          "type": "Camera2D",
           "name": "camera"
         }
       ]
@@ -3970,6 +3962,43 @@
           "type": "Vector2",
           "name": "position"
         },
+        {
+          "type": "Camera2D",
+          "name": "camera"
+        }
+      ]
+    },
+    {
+      "name": "GetScreenToWorld2D",
+      "description": "Get the world space position for a 2d camera screen space position",
+      "returnType": "Vector2",
+      "params": [
+        {
+          "type": "Vector2",
+          "name": "position"
+        },
+        {
+          "type": "Camera2D",
+          "name": "camera"
+        }
+      ]
+    },
+    {
+      "name": "GetCameraMatrix",
+      "description": "Get camera transform matrix (view matrix)",
+      "returnType": "Matrix",
+      "params": [
+        {
+          "type": "Camera",
+          "name": "camera"
+        }
+      ]
+    },
+    {
+      "name": "GetCameraMatrix2D",
+      "description": "Get camera 2d transform matrix",
+      "returnType": "Matrix",
+      "params": [
         {
           "type": "Camera2D",
           "name": "camera"
@@ -4892,6 +4921,25 @@
         {
           "type": "const char *",
           "name": "mappings"
+        }
+      ]
+    },
+    {
+      "name": "SetGamepadVibration",
+      "description": "Set gamepad vibration for both motors",
+      "returnType": "void",
+      "params": [
+        {
+          "type": "int",
+          "name": "gamepad"
+        },
+        {
+          "type": "float",
+          "name": "leftMotor"
+        },
+        {
+          "type": "float",
+          "name": "rightMotor"
         }
       ]
     },
@@ -8327,6 +8375,21 @@
       ]
     },
     {
+      "name": "ColorIsEqual",
+      "description": "Check if two colors are equal",
+      "returnType": "bool",
+      "params": [
+        {
+          "type": "Color",
+          "name": "col1"
+        },
+        {
+          "type": "Color",
+          "name": "col2"
+        }
+      ]
+    },
+    {
       "name": "Fade",
       "description": "Get color with alpha applied, alpha goes from 0.0f to 1.0f",
       "returnType": "Color",
@@ -8343,7 +8406,7 @@
     },
     {
       "name": "ColorToInt",
-      "description": "Get hexadecimal value for a Color",
+      "description": "Get hexadecimal value for a Color (0xRRGGBBAA)",
       "returnType": "int",
       "params": [
         {

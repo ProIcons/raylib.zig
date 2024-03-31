@@ -887,10 +887,10 @@
       "custom": false
     },
     {
-      "name": "GetMouseRay",
+      "name": "GetScreenToWorldRay",
       "params": [
         {
-          "name": "mousePosition",
+          "name": "position",
           "typ": "Vector2"
         },
         {
@@ -899,31 +899,31 @@
         }
       ],
       "returnType": "Ray",
-      "description": "Get a ray trace from mouse position",
+      "description": "Get a ray trace from screen position (i.e mouse)",
       "custom": false
     },
     {
-      "name": "GetCameraMatrix",
+      "name": "GetScreenToWorldRayEx",
       "params": [
+        {
+          "name": "position",
+          "typ": "Vector2"
+        },
         {
           "name": "camera",
           "typ": "Camera3D"
-        }
-      ],
-      "returnType": "Matrix",
-      "description": "Get camera transform matrix (view matrix)",
-      "custom": false
-    },
-    {
-      "name": "GetCameraMatrix2D",
-      "params": [
+        },
         {
-          "name": "camera",
-          "typ": "Camera2D"
+          "name": "width",
+          "typ": "f32"
+        },
+        {
+          "name": "height",
+          "typ": "f32"
         }
       ],
-      "returnType": "Matrix",
-      "description": "Get camera 2d transform matrix",
+      "returnType": "Ray",
+      "description": "Get a ray trace from screen position (i.e mouse) in a viewport",
       "custom": false
     },
     {
@@ -940,22 +940,6 @@
       ],
       "returnType": "Vector2",
       "description": "Get the screen space position for a 3d world space position",
-      "custom": false
-    },
-    {
-      "name": "GetScreenToWorld2D",
-      "params": [
-        {
-          "name": "position",
-          "typ": "Vector2"
-        },
-        {
-          "name": "camera",
-          "typ": "Camera2D"
-        }
-      ],
-      "returnType": "Vector2",
-      "description": "Get the world space position for a 2d camera screen space position",
       "custom": false
     },
     {
@@ -996,6 +980,46 @@
       ],
       "returnType": "Vector2",
       "description": "Get the screen space position for a 2d camera world space position",
+      "custom": false
+    },
+    {
+      "name": "GetScreenToWorld2D",
+      "params": [
+        {
+          "name": "position",
+          "typ": "Vector2"
+        },
+        {
+          "name": "camera",
+          "typ": "Camera2D"
+        }
+      ],
+      "returnType": "Vector2",
+      "description": "Get the world space position for a 2d camera screen space position",
+      "custom": false
+    },
+    {
+      "name": "GetCameraMatrix",
+      "params": [
+        {
+          "name": "camera",
+          "typ": "Camera3D"
+        }
+      ],
+      "returnType": "Matrix",
+      "description": "Get camera transform matrix (view matrix)",
+      "custom": false
+    },
+    {
+      "name": "GetCameraMatrix2D",
+      "params": [
+        {
+          "name": "camera",
+          "typ": "Camera2D"
+        }
+      ],
+      "returnType": "Matrix",
+      "description": "Get camera 2d transform matrix",
       "custom": false
     },
     {
@@ -2006,6 +2030,26 @@
       ],
       "returnType": "i32",
       "description": "Set internal gamepad mappings (SDL_GameControllerDB)",
+      "custom": false
+    },
+    {
+      "name": "SetGamepadVibration",
+      "params": [
+        {
+          "name": "gamepad",
+          "typ": "i32"
+        },
+        {
+          "name": "leftMotor",
+          "typ": "f32"
+        },
+        {
+          "name": "rightMotor",
+          "typ": "f32"
+        }
+      ],
+      "returnType": "void",
+      "description": "Set gamepad vibration for both motors",
       "custom": false
     },
     {
@@ -5643,6 +5687,22 @@
       "custom": false
     },
     {
+      "name": "ColorIsEqual",
+      "params": [
+        {
+          "name": "col1",
+          "typ": "Color"
+        },
+        {
+          "name": "col2",
+          "typ": "Color"
+        }
+      ],
+      "returnType": "bool",
+      "description": "Check if two colors are equal",
+      "custom": false
+    },
+    {
       "name": "Fade",
       "params": [
         {
@@ -5667,7 +5727,7 @@
         }
       ],
       "returnType": "i32",
-      "description": "Get hexadecimal value for a Color",
+      "description": "Get hexadecimal value for a Color (0xRRGGBBAA)",
       "custom": false
     },
     {
@@ -9790,6 +9850,13 @@
       "custom": false
     },
     {
+      "name": "rlGetActiveFramebuffer",
+      "params": [],
+      "returnType": "u32",
+      "description": "Get the currently active render texture (fbo), 0 for default framebuffer",
+      "custom": false
+    },
+    {
       "name": "rlActiveDrawBuffers",
       "params": [
         {
@@ -10829,16 +10896,7 @@
     },
     {
       "name": "rlLoadFramebuffer",
-      "params": [
-        {
-          "name": "width",
-          "typ": "i32"
-        },
-        {
-          "name": "height",
-          "typ": "i32"
-        }
-      ],
+      "params": [],
       "returnType": "u32",
       "description": "Load an empty framebuffer",
       "custom": false
@@ -11801,6 +11859,38 @@
       "custom": false
     },
     {
+      "name": "Vector2Min",
+      "params": [
+        {
+          "name": "v1",
+          "typ": "Vector2"
+        },
+        {
+          "name": "v2",
+          "typ": "Vector2"
+        }
+      ],
+      "returnType": "Vector2",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector2Max",
+      "params": [
+        {
+          "name": "v1",
+          "typ": "Vector2"
+        },
+        {
+          "name": "v2",
+          "typ": "Vector2"
+        }
+      ],
+      "returnType": "Vector2",
+      "description": "",
+      "custom": false
+    },
+    {
       "name": "Vector2Rotate",
       "params": [
         {
@@ -11901,6 +11991,26 @@
         }
       ],
       "returnType": "i32",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector2Refract",
+      "params": [
+        {
+          "name": "v",
+          "typ": "Vector2"
+        },
+        {
+          "name": "n",
+          "typ": "Vector2"
+        },
+        {
+          "name": "r",
+          "typ": "f32"
+        }
+      ],
+      "returnType": "Vector2",
       "description": "",
       "custom": false
     },
@@ -12271,6 +12381,26 @@
       "custom": false
     },
     {
+      "name": "Vector3MoveTowards",
+      "params": [
+        {
+          "name": "v",
+          "typ": "Vector3"
+        },
+        {
+          "name": "target",
+          "typ": "Vector3"
+        },
+        {
+          "name": "maxDistance",
+          "typ": "f32"
+        }
+      ],
+      "returnType": "Vector3",
+      "description": "",
+      "custom": false
+    },
+    {
       "name": "Vector3Lerp",
       "params": [
         {
@@ -12479,6 +12609,328 @@
         }
       ],
       "returnType": "Vector3",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector4Zero",
+      "params": [],
+      "returnType": "Vector4",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector4One",
+      "params": [],
+      "returnType": "Vector4",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector4Add",
+      "params": [
+        {
+          "name": "v1",
+          "typ": "Vector4"
+        },
+        {
+          "name": "v2",
+          "typ": "Vector4"
+        }
+      ],
+      "returnType": "Vector4",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector4AddValue",
+      "params": [
+        {
+          "name": "v",
+          "typ": "Vector4"
+        },
+        {
+          "name": "add",
+          "typ": "f32"
+        }
+      ],
+      "returnType": "Vector4",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector4Subtract",
+      "params": [
+        {
+          "name": "v1",
+          "typ": "Vector4"
+        },
+        {
+          "name": "v2",
+          "typ": "Vector4"
+        }
+      ],
+      "returnType": "Vector4",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector4SubtractValue",
+      "params": [
+        {
+          "name": "v",
+          "typ": "Vector4"
+        },
+        {
+          "name": "add",
+          "typ": "f32"
+        }
+      ],
+      "returnType": "Vector4",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector4Length",
+      "params": [
+        {
+          "name": "v",
+          "typ": "Vector4"
+        }
+      ],
+      "returnType": "f32",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector4LengthSqr",
+      "params": [
+        {
+          "name": "v",
+          "typ": "Vector4"
+        }
+      ],
+      "returnType": "f32",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector4DotProduct",
+      "params": [
+        {
+          "name": "v1",
+          "typ": "Vector4"
+        },
+        {
+          "name": "v2",
+          "typ": "Vector4"
+        }
+      ],
+      "returnType": "f32",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector4Distance",
+      "params": [
+        {
+          "name": "v1",
+          "typ": "Vector4"
+        },
+        {
+          "name": "v2",
+          "typ": "Vector4"
+        }
+      ],
+      "returnType": "f32",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector4DistanceSqr",
+      "params": [
+        {
+          "name": "v1",
+          "typ": "Vector4"
+        },
+        {
+          "name": "v2",
+          "typ": "Vector4"
+        }
+      ],
+      "returnType": "f32",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector4Scale",
+      "params": [
+        {
+          "name": "v",
+          "typ": "Vector4"
+        },
+        {
+          "name": "scale",
+          "typ": "f32"
+        }
+      ],
+      "returnType": "Vector4",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector4Multiply",
+      "params": [
+        {
+          "name": "v1",
+          "typ": "Vector4"
+        },
+        {
+          "name": "v2",
+          "typ": "Vector4"
+        }
+      ],
+      "returnType": "Vector4",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector4Negate",
+      "params": [
+        {
+          "name": "v",
+          "typ": "Vector4"
+        }
+      ],
+      "returnType": "Vector4",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector4Divide",
+      "params": [
+        {
+          "name": "v1",
+          "typ": "Vector4"
+        },
+        {
+          "name": "v2",
+          "typ": "Vector4"
+        }
+      ],
+      "returnType": "Vector4",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector4Normalize",
+      "params": [
+        {
+          "name": "v",
+          "typ": "Vector4"
+        }
+      ],
+      "returnType": "Vector4",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector4Min",
+      "params": [
+        {
+          "name": "v1",
+          "typ": "Vector4"
+        },
+        {
+          "name": "v2",
+          "typ": "Vector4"
+        }
+      ],
+      "returnType": "Vector4",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector4Max",
+      "params": [
+        {
+          "name": "v1",
+          "typ": "Vector4"
+        },
+        {
+          "name": "v2",
+          "typ": "Vector4"
+        }
+      ],
+      "returnType": "Vector4",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector4Lerp",
+      "params": [
+        {
+          "name": "v1",
+          "typ": "Vector4"
+        },
+        {
+          "name": "v2",
+          "typ": "Vector4"
+        },
+        {
+          "name": "amount",
+          "typ": "f32"
+        }
+      ],
+      "returnType": "Vector4",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector4MoveTowards",
+      "params": [
+        {
+          "name": "v",
+          "typ": "Vector4"
+        },
+        {
+          "name": "target",
+          "typ": "Vector4"
+        },
+        {
+          "name": "maxDistance",
+          "typ": "f32"
+        }
+      ],
+      "returnType": "Vector4",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector4Invert",
+      "params": [
+        {
+          "name": "v",
+          "typ": "Vector4"
+        }
+      ],
+      "returnType": "Vector4",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "Vector4Equals",
+      "params": [
+        {
+          "name": "p",
+          "typ": "Vector4"
+        },
+        {
+          "name": "q",
+          "typ": "Vector4"
+        }
+      ],
+      "returnType": "i32",
       "description": "",
       "custom": false
     },
@@ -14024,7 +14476,7 @@
         {
           "name": "GAMEPAD_BUTTON_RIGHT_FACE_RIGHT",
           "value": 6,
-          "description": "Gamepad right button right (i.e. PS3: Square, Xbox: X)"
+          "description": "Gamepad right button right (i.e. PS3: Circle, Xbox: B)"
         },
         {
           "name": "GAMEPAD_BUTTON_RIGHT_FACE_DOWN",
@@ -14034,7 +14486,7 @@
         {
           "name": "GAMEPAD_BUTTON_RIGHT_FACE_LEFT",
           "value": 8,
-          "description": "Gamepad right button left (i.e. PS3: Circle, Xbox: B)"
+          "description": "Gamepad right button left (i.e. PS3: Square, Xbox: X)"
         },
         {
           "name": "GAMEPAD_BUTTON_LEFT_TRIGGER_1",
@@ -16869,7 +17321,7 @@
     {
       "name": "PI",
       "typ": "f32",
-      "value": "3.14159265358979323846",
+      "value": "3.141592653589793e0",
       "description": "",
       "custom": false
     },
@@ -17107,14 +17559,14 @@
     {
       "name": "RL_CULL_DISTANCE_NEAR",
       "typ": "f64",
-      "value": "0.01",
+      "value": "1e-2",
       "description": "Default near cull distance",
       "custom": false
     },
     {
       "name": "RL_CULL_DISTANCE_FAR",
       "typ": "f64",
-      "value": "1000.0",
+      "value": "1e3",
       "description": "Default far cull distance",
       "custom": false
     },
@@ -17679,6 +18131,20 @@
       "custom": false
     },
     {
+      "name": "GL_PROGRAM_POINT_SIZE",
+      "typ": "i32",
+      "value": "34370",
+      "description": "",
+      "custom": false
+    },
+    {
+      "name": "GL_LINE_WIDTH",
+      "typ": "i32",
+      "value": "2849",
+      "description": "",
+      "custom": false
+    },
+    {
       "name": "GL_UNSIGNED_SHORT_5_6_5",
       "typ": "i32",
       "value": "33635",
@@ -17821,7 +18287,7 @@
     {
       "name": "EPSILON",
       "typ": "f32",
-      "value": "0.000001",
+      "value": "1e-6",
       "description": "",
       "custom": false
     }

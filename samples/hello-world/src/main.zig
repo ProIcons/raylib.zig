@@ -1,3 +1,4 @@
+const std = @import("std");
 const raylib = @import("raylib");
 
 pub fn main() void {

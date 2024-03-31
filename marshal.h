@@ -255,26 +255,29 @@ void mSetShaderValueTexture(Shader *shader, int locIndex, Texture2D *texture);
 // Unload shader from GPU memory (VRAM)
 void mUnloadShader(Shader *shader);
 
-// Get a ray trace from mouse position
-void mGetMouseRay(Ray *out, Vector2 *mousePosition, Camera3D *camera);
+// Get a ray trace from screen position (i.e mouse)
+void mGetScreenToWorldRay(Ray *out, Vector2 *position, Camera3D *camera);
 
-// Get camera transform matrix (view matrix)
-void mGetCameraMatrix(Matrix *out, Camera3D *camera);
-
-// Get camera 2d transform matrix
-void mGetCameraMatrix2D(Matrix *out, Camera2D *camera);
+// Get a ray trace from screen position (i.e mouse) in a viewport
+void mGetScreenToWorldRayEx(Ray *out, Vector2 *position, Camera3D *camera, float width, float height);
 
 // Get the screen space position for a 3d world space position
 void mGetWorldToScreen(Vector2 *out, Vector3 *position, Camera3D *camera);
-
-// Get the world space position for a 2d camera screen space position
-void mGetScreenToWorld2D(Vector2 *out, Vector2 *position, Camera2D *camera);
 
 // Get size position for a 3d world space position
 void mGetWorldToScreenEx(Vector2 *out, Vector3 *position, Camera3D *camera, int width, int height);
 
 // Get the screen space position for a 2d camera world space position
 void mGetWorldToScreen2D(Vector2 *out, Vector2 *position, Camera2D *camera);
+
+// Get the world space position for a 2d camera screen space position
+void mGetScreenToWorld2D(Vector2 *out, Vector2 *position, Camera2D *camera);
+
+// Get camera transform matrix (view matrix)
+void mGetCameraMatrix(Matrix *out, Camera3D *camera);
+
+// Get camera 2d transform matrix
+void mGetCameraMatrix2D(Matrix *out, Camera2D *camera);
 
 // Set target FPS (maximum)
 void mSetTargetFPS(int fps);
@@ -491,6 +494,9 @@ float mGetGamepadAxisMovement(int gamepad, int axis);
 
 // Set internal gamepad mappings (SDL_GameControllerDB)
 int mSetGamepadMappings(const char * mappings);
+
+// Set gamepad vibration for both motors
+void mSetGamepadVibration(int gamepad, float leftMotor, float rightMotor);
 
 // Check if a mouse button has been pressed once
 bool mIsMouseButtonPressed(int button);
@@ -1047,10 +1053,13 @@ void mDrawTexturePro(Texture2D *texture, Rectangle *source, Rectangle *dest, Vec
 // Draws a texture (or part of it) that stretches or shrinks nicely
 void mDrawTextureNPatch(Texture2D *texture, NPatchInfo *nPatchInfo, Rectangle *dest, Vector2 *origin, float rotation, Color *tint);
 
+// Check if two colors are equal
+bool mColorIsEqual(Color *col1, Color *col2);
+
 // Get color with alpha applied, alpha goes from 0.0f to 1.0f
 void mFade(Color *out, Color *color, float alpha);
 
-// Get hexadecimal value for a Color
+// Get hexadecimal value for a Color (0xRRGGBBAA)
 int mColorToInt(Color *color);
 
 // Get Color normalized as float [0..1]
@@ -1758,6 +1767,9 @@ void mrlEnableFramebuffer(unsigned int id);
 // Disable render texture (fbo), return to default framebuffer
 void mrlDisableFramebuffer(void);
 
+// Get the currently active render texture (fbo), 0 for default framebuffer
+unsigned int mrlGetActiveFramebuffer(void);
+
 // Activate multiple draw color buffers
 void mrlActiveDrawBuffers(int count);
 
@@ -1981,7 +1993,7 @@ void * mrlReadTexturePixels(unsigned int id, int width, int height, int format);
 unsigned char * mrlReadScreenPixels(int width, int height);
 
 // Load an empty framebuffer
-unsigned int mrlLoadFramebuffer(int width, int height);
+unsigned int mrlLoadFramebuffer(void);
 
 // Attach texture/renderbuffer to a framebuffer
 void mrlFramebufferAttach(unsigned int fboId, unsigned int texId, int attachType, int texType, int mipLevel);
@@ -2167,6 +2179,12 @@ void mVector2Lerp(Vector2 *out, Vector2 *v1, Vector2 *v2, float amount);
 void mVector2Reflect(Vector2 *out, Vector2 *v, Vector2 *normal);
 
 // 
+void mVector2Min(Vector2 *out, Vector2 *v1, Vector2 *v2);
+
+// 
+void mVector2Max(Vector2 *out, Vector2 *v1, Vector2 *v2);
+
+// 
 void mVector2Rotate(Vector2 *out, Vector2 *v, float angle);
 
 // 
@@ -2183,6 +2201,9 @@ void mVector2ClampValue(Vector2 *out, Vector2 *v, float min, float max);
 
 // 
 int mVector2Equals(Vector2 *p, Vector2 *q);
+
+// 
+void mVector2Refract(Vector2 *out, Vector2 *v, Vector2 *n, float r);
 
 // 
 void mVector3Zero(Vector3 *out);
@@ -2260,6 +2281,9 @@ void mVector3RotateByQuaternion(Vector3 *out, Vector3 *v, Vector4 *q);
 void mVector3RotateByAxisAngle(Vector3 *out, Vector3 *v, Vector3 *axis, float angle);
 
 // 
+void mVector3MoveTowards(Vector3 *out, Vector3 *v, Vector3 *target, float maxDistance);
+
+// 
 void mVector3Lerp(Vector3 *out, Vector3 *v1, Vector3 *v2, float amount);
 
 // 
@@ -2294,6 +2318,72 @@ int mVector3Equals(Vector3 *p, Vector3 *q);
 
 // 
 void mVector3Refract(Vector3 *out, Vector3 *v, Vector3 *n, float r);
+
+// 
+void mVector4Zero(Vector4 *out);
+
+// 
+void mVector4One(Vector4 *out);
+
+// 
+void mVector4Add(Vector4 *out, Vector4 *v1, Vector4 *v2);
+
+// 
+void mVector4AddValue(Vector4 *out, Vector4 *v, float add);
+
+// 
+void mVector4Subtract(Vector4 *out, Vector4 *v1, Vector4 *v2);
+
+// 
+void mVector4SubtractValue(Vector4 *out, Vector4 *v, float add);
+
+// 
+float mVector4Length(Vector4 *v);
+
+// 
+float mVector4LengthSqr(Vector4 *v);
+
+// 
+float mVector4DotProduct(Vector4 *v1, Vector4 *v2);
+
+// 
+float mVector4Distance(Vector4 *v1, Vector4 *v2);
+
+// 
+float mVector4DistanceSqr(Vector4 *v1, Vector4 *v2);
+
+// 
+void mVector4Scale(Vector4 *out, Vector4 *v, float scale);
+
+// 
+void mVector4Multiply(Vector4 *out, Vector4 *v1, Vector4 *v2);
+
+// 
+void mVector4Negate(Vector4 *out, Vector4 *v);
+
+// 
+void mVector4Divide(Vector4 *out, Vector4 *v1, Vector4 *v2);
+
+// 
+void mVector4Normalize(Vector4 *out, Vector4 *v);
+
+// 
+void mVector4Min(Vector4 *out, Vector4 *v1, Vector4 *v2);
+
+// 
+void mVector4Max(Vector4 *out, Vector4 *v1, Vector4 *v2);
+
+// 
+void mVector4Lerp(Vector4 *out, Vector4 *v1, Vector4 *v2, float amount);
+
+// 
+void mVector4MoveTowards(Vector4 *out, Vector4 *v, Vector4 *target, float maxDistance);
+
+// 
+void mVector4Invert(Vector4 *out, Vector4 *v);
+
+// 
+int mVector4Equals(Vector4 *p, Vector4 *q);
 
 // 
 float mMatrixDeterminant(Matrix *mat);
